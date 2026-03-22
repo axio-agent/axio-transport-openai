@@ -45,3 +45,7 @@ dev = [
     "ruff>=0.9",
     "pytest-cov>=7.1.0",
 ]
+
+[[tool.mypy.overrides]]
+module = ["axio", "axio.*"]
+ignore_missing_imports = true
