@@ -1,7 +1,8 @@
 [project]
 name = "axio-transport-openai"
-version = "0.2.1"
+version = "0.2.2"
 description = "OpenAI-compatible transport for Axio"
+readme = "README.md"
 requires-python = ">=3.12"
 license = {text = "MIT"}
 dependencies = ["axio", "aiohttp>=3.11"]
