@@ -1,10 +1,11 @@
 [project]
 name = "axio-transport-openai"
-version = "0.2.2"
+version = "0.2.3"
 description = "OpenAI-compatible transport for Axio"
 readme = "README.md"
 requires-python = ">=3.12"
 license = {text = "MIT"}
+keywords = ["llm", "agent", "ai", "openai", "transport", "openai-compatible"]
 dependencies = ["axio", "aiohttp>=3.11"]
 
 [project.optional-dependencies]
@@ -16,6 +17,10 @@ openai = "axio_transport_openai:OpenAITransport"
 [project.entry-points."axio.transport.settings"]
 openai = "axio_transport_openai:OpenAISettingsScreen"
 
+
+[project.urls]
+Homepage = "https://github.com/axio-agent/axio-transport-openai"
+Repository = "https://github.com/axio-agent/axio-transport-openai"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
