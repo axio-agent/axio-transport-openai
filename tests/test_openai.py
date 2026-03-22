@@ -17,6 +17,7 @@ from axio.messages import Message
 from axio.models import Capability, ModelRegistry, ModelSpec
 from axio.tool import Tool, ToolHandler
 from axio.types import StopReason, Usage
+
 from axio_transport_openai import OPENAI_MODELS, OpenAITransport, ThinkTagParser, _strip_title
 
 # ---------------------------------------------------------------------------

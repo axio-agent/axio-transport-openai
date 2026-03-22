@@ -10,6 +10,7 @@ import aiohttp
 import pytest
 from axio.events import StreamEvent, TextDelta
 from axio.exceptions import StreamError
+
 from axio_transport_openai import OpenAITransport
 
 
