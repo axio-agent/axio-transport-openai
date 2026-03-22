@@ -690,7 +690,7 @@ def test_registry_len() -> None:
 
 def test_registry_iter() -> None:
     r = _sample_registry()
-    assert list(r) == [_SPEC_A, _SPEC_B, _SPEC_C]
+    assert list(r) == [_SPEC_A, _SPEC_B, _SPEC_C]  # type: ignore[comparison-overlap]
 
 
 def test_registry_setitem() -> None:
@@ -784,7 +784,7 @@ def test_registry_search_single_term() -> None:
 def test_registry_search_multiple_terms() -> None:
     r = _sample_registry()
     sub = r.search("alpha", "1")
-    assert list(sub) == [_SPEC_A]
+    assert list(sub) == [_SPEC_A]  # type: ignore[comparison-overlap]
 
 
 def test_registry_search_no_match() -> None:
@@ -796,7 +796,7 @@ def test_registry_search_no_match() -> None:
 def test_registry_search_chaining() -> None:
     r = _sample_registry()
     sub = r.search("alpha").by_capability(Capability.vision)
-    assert list(sub) == [_SPEC_A]
+    assert list(sub) == [_SPEC_A]  # type: ignore[comparison-overlap]
 
 
 def test_registry_mutable_mapping_protocol() -> None:

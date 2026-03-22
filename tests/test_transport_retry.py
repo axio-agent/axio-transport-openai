@@ -88,7 +88,7 @@ async def test_retry_on_5xx() -> None:
     transport = _make_transport()
     error_resp = _mock_response(500, "Internal Server Error")
     ok_resp = _mock_sse_response("recovered")
-    transport.session.post = MagicMock(  # type: ignore[union-attr]
+    transport.session.post = MagicMock(  # type: ignore[union-attr,method-assign]
         side_effect=[_FakeContextManager(error_resp), _FakeContextManager(ok_resp)],
     )
 
@@ -102,7 +102,7 @@ async def test_retry_on_429() -> None:
     transport = _make_transport()
     rate_limit_resp = _mock_response(429, "Rate limited")
     ok_resp = _mock_sse_response("ok")
-    transport.session.post = MagicMock(  # type: ignore[union-attr]
+    transport.session.post = MagicMock(  # type: ignore[union-attr,method-assign]
         side_effect=[_FakeContextManager(rate_limit_resp), _FakeContextManager(ok_resp)],
     )
 
@@ -115,7 +115,7 @@ async def test_retry_on_429() -> None:
 async def test_no_retry_on_4xx() -> None:
     transport = _make_transport()
     client_error_resp = _mock_response(400, "Bad Request")
-    transport.session.post = MagicMock(  # type: ignore[union-attr]
+    transport.session.post = MagicMock(  # type: ignore[union-attr,method-assign]
         side_effect=[_FakeContextManager(client_error_resp)],
     )
 
@@ -128,7 +128,7 @@ async def test_no_retry_on_4xx() -> None:
 async def test_no_retry_on_401() -> None:
     transport = _make_transport()
     auth_error_resp = _mock_response(401, "Unauthorized")
-    transport.session.post = MagicMock(  # type: ignore[union-attr]
+    transport.session.post = MagicMock(  # type: ignore[union-attr,method-assign]
         side_effect=[_FakeContextManager(auth_error_resp)],
     )
 
@@ -141,7 +141,7 @@ async def test_no_retry_on_401() -> None:
 async def test_max_retries_exhausted() -> None:
     transport = _make_transport(max_retries=3)
     error_resps = [_FakeContextManager(_mock_response(500, "down")) for _ in range(3)]
-    transport.session.post = MagicMock(side_effect=error_resps)  # type: ignore[union-attr]
+    transport.session.post = MagicMock(side_effect=error_resps)  # type: ignore[union-attr,method-assign]
 
     with pytest.raises(StreamError, match="500"):
         await _collect_events(transport.stream([], [], ""))
@@ -152,7 +152,7 @@ async def test_max_retries_exhausted() -> None:
 async def test_retry_on_connection_error() -> None:
     transport = _make_transport()
     ok_resp = _mock_sse_response("reconnected")
-    transport.session.post = MagicMock(  # type: ignore[union-attr]
+    transport.session.post = MagicMock(  # type: ignore[union-attr,method-assign]
         side_effect=[
             aiohttp.ClientError("Connection reset"),
             _FakeContextManager(ok_resp),
@@ -169,7 +169,7 @@ async def test_retry_on_520() -> None:
     transport = _make_transport()
     error_resp = _mock_response(520, "Web server returned an unknown error")
     ok_resp = _mock_sse_response("ok")
-    transport.session.post = MagicMock(  # type: ignore[union-attr]
+    transport.session.post = MagicMock(  # type: ignore[union-attr,method-assign]
         side_effect=[_FakeContextManager(error_resp), _FakeContextManager(ok_resp)],
     )
 
@@ -182,7 +182,7 @@ async def test_retry_on_520() -> None:
 async def test_success_on_first_attempt() -> None:
     transport = _make_transport()
     ok_resp = _mock_sse_response("first try")
-    transport.session.post = MagicMock(  # type: ignore[union-attr]
+    transport.session.post = MagicMock(  # type: ignore[union-attr,method-assign]
         side_effect=[_FakeContextManager(ok_resp)],
     )
 
@@ -196,7 +196,7 @@ async def test_success_on_first_attempt() -> None:
 async def test_exponential_backoff_delays() -> None:
     transport = _make_transport(max_retries=3, retry_base_delay=1.0)
     error_resps = [_FakeContextManager(_mock_response(503, "unavailable")) for _ in range(3)]
-    transport.session.post = MagicMock(side_effect=error_resps)  # type: ignore[union-attr]
+    transport.session.post = MagicMock(side_effect=error_resps)  # type: ignore[union-attr,method-assign]
 
     with patch("axio_transport_openai.asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
         with pytest.raises(StreamError):
