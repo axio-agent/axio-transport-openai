@@ -129,19 +129,19 @@ wheels = [
 
 [[package]]
 name = "axio"
-version = "0.1.1"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d5/c4/9fb5beefc5fa3090de3bfbdbf761fa14b0467e04d60f464166ccc0e9ca4c/axio-0.1.1.tar.gz", hash = "sha256:c59d8b246355379653dc967306189d997328dbfe145bbddf8873ec5786f48420", size = 53962, upload-time = "2026-03-22T18:38:36.497Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0b/df/df4f46276669df7bf3c62e5bef60fee611e9fa902ee714a3cbc77e510022/axio-0.2.0.tar.gz", hash = "sha256:10ae13271c3f097c0e20b1f3e5b039cfca04f52533fb926b8254828199f55206", size = 53963, upload-time = "2026-03-22T19:22:50.096Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/19/07/74deca7e757a5e66fe58ad0c54e605764e8407c49021dd5fe4d9947c9f8b/axio-0.1.1-py3-none-any.whl", hash = "sha256:b764858e311825e5648354fda579894cc522a10d3bc4cf939e8517ffc2fb1b54", size = 16836, upload-time = "2026-03-22T18:38:35.348Z" },
+    { url = "https://files.pythonhosted.org/packages/26/c0/a27ce8b4ff865d15cbb45cd4f1a8d63cc8d3bd34295ee5091d8d5e1f9175/axio-0.2.0-py3-none-any.whl", hash = "sha256:a1372d44f1102d18d123ced7a5c70dda2bc007ee5f653250e7c65a68866c75a4", size = 16833, upload-time = "2026-03-22T19:22:48.974Z" },
 ]
 
 [[package]]
 name = "axio-transport-openai"
-version = "0.1.2"
+version = "0.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
