@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 _VT = frozenset({Capability.text, Capability.vision, Capability.tool_use})
+_DEFAULT_MODEL = ModelSpec(id="")
 _RT = frozenset({Capability.text, Capability.reasoning, Capability.tool_use})
 _TT = frozenset({Capability.text, Capability.tool_use})
 
@@ -324,7 +325,7 @@ class OpenAITransport:
 
     base_url: str = ""
     api_key: str = ""
-    model: ModelSpec = field(default_factory=lambda: OPENAI_MODELS["gpt-4.1-mini"])
+    model: ModelSpec = field(default_factory=lambda: _DEFAULT_MODEL)
     models: ModelRegistry = field(default_factory=lambda: ModelRegistry(OPENAI_MODELS.values()))
     session: aiohttp.ClientSession | None = field(default=None, repr=False, compare=False)
     max_retries: int = 10
@@ -333,6 +334,15 @@ class OpenAITransport:
     def __post_init__(self) -> None:
         if not self.base_url:
             self.base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
+        if self.model is _DEFAULT_MODEL:
+            env_model = os.environ.get("OPENAI_MODEL")
+            if env_model:
+                try:
+                    self.model = OPENAI_MODELS[env_model]
+                except KeyError:
+                    self.model = ModelSpec(id=env_model)
+            else:
+                self.model = OPENAI_MODELS["gpt-4.1-mini"]
 
     def _get_retry_delay(self, resp: aiohttp.ClientResponse | None, attempt: int) -> float:
         """Return delay in seconds: prefer Retry-After header, fall back to exponential backoff."""
@@ -573,7 +583,35 @@ class OpenAITransport:
         raise last_exc or StreamError("Embedding max retries exceeded")
 
     async def fetch_models(self) -> None:
-        self.models = OPENAI_MODELS
+        assert self.session is not None, "session is required for fetch_models"
+        url = f"{self.base_url}/models"
+        headers = {"Authorization": f"Bearer {self.api_key}"}
+        try:
+            async with self.session.get(url, headers=headers) as resp:
+                if resp.status != 200:
+                    logger.warning("GET %s returned %d, falling back to built-in registry", url, resp.status)
+                    self.models = OPENAI_MODELS
+                    return
+                data = await resp.json()
+        except (aiohttp.ClientError, asyncio.TimeoutError) as exc:
+            logger.warning("GET %s failed (%s), falling back to built-in registry", url, exc)
+            self.models = OPENAI_MODELS
+            return
+
+        remote_ids: set[str] = set()
+        for item in data.get("data", []):
+            model_id = item.get("id", "")
+            if not model_id:
+                continue
+            remote_ids.add(model_id)
+
+        registry = ModelRegistry()
+        for model_id in remote_ids:
+            if model_id in OPENAI_MODELS:
+                registry[model_id] = OPENAI_MODELS[model_id]
+            else:
+                registry[model_id] = ModelSpec(id=model_id)
+        self.models = registry
 
 
 try:
