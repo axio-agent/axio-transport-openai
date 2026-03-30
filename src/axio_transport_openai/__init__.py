@@ -6,6 +6,7 @@ import asyncio
 import base64
 import json
 import logging
+import os
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
@@ -321,13 +322,17 @@ class OpenAITransport:
         },
     )
 
-    base_url: str = "https://api.openai.com/v1"
+    base_url: str = ""
     api_key: str = ""
     model: ModelSpec = field(default_factory=lambda: OPENAI_MODELS["gpt-4.1-mini"])
     models: ModelRegistry = field(default_factory=lambda: ModelRegistry(OPENAI_MODELS.values()))
     session: aiohttp.ClientSession | None = field(default=None, repr=False, compare=False)
     max_retries: int = 10
     retry_base_delay: float = 5.0
+
+    def __post_init__(self) -> None:
+        if not self.base_url:
+            self.base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
 
     def _get_retry_delay(self, resp: aiohttp.ClientResponse | None, attempt: int) -> float:
         """Return delay in seconds: prefer Retry-After header, fall back to exponential backoff."""
