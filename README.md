@@ -1,3 +1,6 @@
+> [\!NOTE]
+> This repository has been archived. Development continues in [axio-agent/monorepo](https://github.com/axio-agent/monorepo).
+
 # axio-transport-openai
 
 [![PyPI](https://img.shields.io/pypi/v/axio-transport-openai)](https://pypi.org/project/axio-transport-openai/)
@@ -70,7 +73,8 @@ async for event in agent.run_stream("Tell me a joke", ctx):
         case TextDelta(delta=text):
             print(text, end="", flush=True)
         case SessionEndEvent(total_usage=usage):
-            print(f"\n[{usage.input_tokens}in / {usage.output_tokens}out tokens]")
+            print(f"
+[{usage.input_tokens}in / {usage.output_tokens}out tokens]")
 ```
 
 ## Plugin registration
