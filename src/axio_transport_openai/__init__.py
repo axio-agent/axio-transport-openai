@@ -612,56 +612,8 @@ class OpenAITransport:
 
     @staticmethod
     def _parse_model(entry: dict[str, Any]) -> ModelSpec:
-        """Parse a model entry from /models response into a ModelSpec.
-
-        Handles both minimal (OpenAI) and rich (OpenRouter) response formats.
-        """
-        caps: set[Capability] = {Capability.text}
-
-        # OpenRouter: supported_parameters contains "tools", "reasoning", etc.
-        supported_params = entry.get("supported_parameters", [])
-        _PARAM_TO_CAP = {
-            "tools": Capability.tool_use,
-            "tool_choice": Capability.tool_use,
-            "reasoning": Capability.reasoning,
-            "include_reasoning": Capability.reasoning,
-            "response_format": Capability.json_mode,
-            "structured_outputs": Capability.structured_outputs,
-        }
-        for param in supported_params:
-            cap = _PARAM_TO_CAP.get(param)
-            if cap is not None:
-                caps.add(cap)
-
-        # Architecture modalities
-        arch = entry.get("architecture", {})
-        input_mods = arch.get("input_modalities", [])
-        output_mods = arch.get("output_modalities", [])
-        if "image" in input_mods:
-            caps.add(Capability.vision)
-        if "embedding" in output_mods:
-            caps.add(Capability.embedding)
-
-        # Pricing (per-token → per-million); negative means dynamic/unknown
-        pricing = entry.get("pricing", {})
-        raw_in = float(pricing.get("prompt", 0))
-        raw_out = float(pricing.get("completion", 0))
-        input_cost = max(0.0, raw_in) * 1_000_000
-        output_cost = max(0.0, raw_out) * 1_000_000
-
-        # Context and output limits
-        top = entry.get("top_provider", {})
-        context_window = int(entry.get("context_length", 0) or top.get("context_length", 0) or 128_000)
-        max_output = int(top.get("max_completion_tokens", 0) or entry.get("max_output_tokens", 0) or 8192)
-
-        return ModelSpec(
-            id=entry["id"],
-            context_window=context_window,
-            max_output_tokens=max_output,
-            capabilities=frozenset(caps),
-            input_cost=input_cost,
-            output_cost=output_cost,
-        )
+        """Parse a model entry from /models response into a ModelSpec."""
+        return ModelSpec(id=entry["id"])
 
 
 try:
